@@ -31,7 +31,6 @@
 service carrier_switcher /system/bin/sh /system/vendor/speccfg/switch_spec.sh
     user root
     group root
-    disabled
     oneshot
 
 on post-fs-data
@@ -43,12 +42,10 @@ on post-fs-data
 service backupAppData /system/bin/sh /data/data/com.android.backup/cache/backupAppData.sh
     user root
     group root
-    disabled
     oneshot
 
 # recoverAppData
 service recoverAppData /system/bin/sh /data/data/com.android.backup/cache/recoverAppData.sh
     user root
     group root
-    disabled
     oneshot
