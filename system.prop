@@ -2,11 +2,11 @@
 af.resampler.quality=4
 ro.qc.sdk.audio.fluencetype=fluence
 persist.audio.fluence.voicecall=true
-persist.audio.fluence.voicerec=false
+persist.audio.fluence.voicerec=true
 persist.audio.fluence.speaker=true
-tunnel.audio.encode=false
-av.offload.enable=true
-audio.offload.gapless.enabled=true
+tunnel.audio.encode=true
+av.offload.enable=false
+audio.offload.gapless.enabled=false
 media.swhevccodectype=0
 use.voice.path.for.pcm.voip=true
 vidc.enc.narrow.searchrange=1
@@ -16,9 +16,6 @@ mm.enable.qcom_parser=38499
 mm.enable.smoothstreaming=true
 mm.disable.sec_smoothstreaming=true
 media.aac_51_output_enabled=true
-
-# set max starting background services
-ro.config.max_starting_bg=8
 
 # Bluetooth
 ro.qualcomm.bt.hci_transport=smd
@@ -49,7 +46,7 @@ persist.rild.nitz_short_ons_3=
 ril.subscription.types=NV,RUIM
 DEVICE_PROVISIONED=1
 # Start in cdma mode
-ro.telephony.default_network=20,1
+ro.telephony.default_network=4
 
 # Radio
 persist.radio.multisim.config=dsds
