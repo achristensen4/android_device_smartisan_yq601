@@ -52,8 +52,8 @@ on fs
     mount ext4 /dev/block/bootdevice/by-name/persist /persist nosuid nodev barrier=1
 
     wait /dev/block/bootdevice/by-name/modem
-    mount vfat /dev/block/bootdevice/by-name/modem /firmware ro shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337
-    #write /sys/kernel/boot_adsp/boot 1
+    mount vfat /dev/block/bootdevice/by-name/modem /firmware rw shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337
+    write /sys/kernel/boot_adsp/boot 1
 
 on post-fs-data
     mkdir /data/tombstones 0771 system system
@@ -99,32 +99,27 @@ on property:persist.radio.radiolog.enable=1
 on property:persist.radio.radiolog.enable=0
     stop radiolog
 
-service radiolog /system/bin/logcat -f /data/logs/radio -v threadtime -n 20 -b radio -r1024
-    class main
+service radiolog /system/bin/logcat -f /data/logs/radio -v
     user radio
     group system log
-    disabled
     oneshot
 
 service klogd /system/bin/klogd /data/logs/.kmsg
     class main
         user root
         group system log
-        disabled
         oneshot
 
-service systemlog /system/bin/logcat -f /data/logs/system -v threadtime -n 20 -r1024
+service systemlog /system/bin/logcat -f /data/logs/system -v
     class main
     user root
     group system log
-    disabled
     oneshot
 
-service eventslog /system/bin/logcat -f /data/logs/events -v threadtime -n 20 -b events -r1024
+service eventslog /system/bin/logcat -f /data/logs/events -v
     class main
     user radio
     group system log
-    disabled
     oneshot
 
 #start camera server as daemon
@@ -157,7 +152,6 @@ service qrngp /system/bin/qrngp -f
    user root
    group root
    oneshot
-   disabled
 
 on property:sys.boot_completed=1
    start qrngp
@@ -167,13 +161,11 @@ service qseecomd /system/bin/qseecomd
    user root
    group root
 
-service mpdecision /system/bin/mpdecision --avg_comp
+service mpdecision /system/bin/mpdecision --nosleep --avg_comp
    user root
-   disabled
 
 service perfd /system/bin/perfd
    user root
-   disabled
 
 service thermal-engine /system/bin/thermal-engine
    class main
@@ -181,32 +173,32 @@ service thermal-engine /system/bin/thermal-engine
    group root
 
 service time_daemon /system/bin/time_daemon
-   class late_start
+   class main
    user root
    group root
 
 service scitd /system/bin/scitd
-   class late_start
+   class main
    socket scitd stream 660 shell factory
    user root
    group root
 
 service smartisan_boot /system/bin/logwrapper /system/xbin/smartisan-boot.sh
-   class late_start
+   class main
    user root
    group root
    oneshot
 
 service audiod /system/bin/audiod
-   class late_start
+   class main
    user system
    group system
 
 on charger-fs
    wait /dev/block/bootdevice/by-name/system
    wait /dev/block/bootdevice/by-name/userdata
-   mount ext4 /dev/block/bootdevice/by-name/system /system ro barrier=1
-   mount ext4 /dev/block/bootdevice/by-name/userdata /data nosuid nodev barrier=1 noauto_da_alloc discard
+   mount ext4 /dev/block/bootdevice/by-name/system /system rw barrier=1
+   mount ext4 /dev/block/bootdevice/by-name/userdata /data nosuid nodev barrier=1
    chown root system /sys/class/power_supply/bms/current_now
    chown root system /sys/class/power_supply/bms/voltage_ocv
    chmod 0664 /sys/class/power_supply/bms/current_now
@@ -219,11 +211,10 @@ on charger
 on boot
     insmod /system/lib/modules/adsprpc.ko
     # Enable Kernel print
-    write /proc/sys/kernel/printk 7
+    write /proc/sys/kernel/printk " 6 6 1 7"
 
 service ppd /system/bin/mm-pp-daemon
-    class late_start
-    disabled
+    class main
     user system
     socket pps stream 0660 system system
     group system graphics
@@ -235,7 +226,7 @@ on property:init.svc.surfaceflinger=running
     start ppd
 
 service wcnss-service /system/bin/wcnss_service
-    class late_start
+    class main
     user system
     group system wifi radio
     oneshot
@@ -276,7 +267,6 @@ service imsdatadaemon /system/bin/imsdatadaemon
     user system
     socket ims_datad stream 0660 system radio
     group system ims wifi radio inet net_raw log qcom_diag net_admin
-    disabled
 
 on property:sys.ims.QMI_DAEMON_STATUS=1
     start imsdatadaemon
@@ -286,16 +276,14 @@ service ims_rtp_daemon /system/bin/ims_rtp_daemon
    user system
    socket ims_rtpd stream 0660 system ims
    group ims net_raw diag qcom_diag log
-   disabled
 
 on property:sys.ims.DATA_DAEMON_STATUS=1
     start ims_rtp_daemon
 
 service power_engine /system/bin/sh /system/etc/init.qcom.power.sh
-    class late_start
+    class main
     user root
     group root
-    disabled
 
 on property:persist.sys.power_ctrl=1
     start power_engine
